@@ -1,0 +1,14 @@
+/Users/gaosg/Projects/tarui/hello/target/debug/deps/uuid-0db084a7d04ad241.rmeta: /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/lib.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/builder.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/error.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/parser.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/fmt.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/timestamp.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/v4.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/rng.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/external.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/macros.rs
+
+/Users/gaosg/Projects/tarui/hello/target/debug/deps/uuid-0db084a7d04ad241.d: /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/lib.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/builder.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/error.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/parser.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/fmt.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/timestamp.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/v4.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/rng.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/external.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/macros.rs
+
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/lib.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/builder.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/error.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/parser.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/fmt.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/timestamp.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/v4.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/rng.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/external.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/uuid-1.4.1/src/macros.rs:

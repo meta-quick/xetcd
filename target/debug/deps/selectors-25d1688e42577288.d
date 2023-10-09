@@ -1,0 +1,18 @@
+/Users/gaosg/Projects/tarui/hello/target/debug/deps/selectors-25d1688e42577288.rmeta: /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/lib.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/attr.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/bloom.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/builder.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/context.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/matching.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/nth_index_cache.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/parser.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/sink.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/tree.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/visitor.rs /Users/gaosg/Projects/tarui/hello/target/debug/build/selectors-40c8b884db82d6d3/out/ascii_case_insensitive_html_attributes.rs
+
+/Users/gaosg/Projects/tarui/hello/target/debug/deps/selectors-25d1688e42577288.d: /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/lib.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/attr.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/bloom.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/builder.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/context.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/matching.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/nth_index_cache.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/parser.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/sink.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/tree.rs /Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/visitor.rs /Users/gaosg/Projects/tarui/hello/target/debug/build/selectors-40c8b884db82d6d3/out/ascii_case_insensitive_html_attributes.rs
+
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/lib.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/attr.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/bloom.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/builder.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/context.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/matching.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/nth_index_cache.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/parser.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/sink.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/tree.rs:
+/Users/gaosg/.cargo/registry/src/index.crates.io-6f17d22bba15001f/selectors-0.22.0/visitor.rs:
+/Users/gaosg/Projects/tarui/hello/target/debug/build/selectors-40c8b884db82d6d3/out/ascii_case_insensitive_html_attributes.rs:
+
+# env-dep:OUT_DIR=/Users/gaosg/Projects/tarui/hello/target/debug/build/selectors-40c8b884db82d6d3/out
