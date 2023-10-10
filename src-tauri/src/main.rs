@@ -12,9 +12,21 @@ fn wow(name: &str) -> String {
     format!("Wow, {}! You've been greeted from Rust!", name)
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![greet,wow])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
+}
+
+mod test {
+    // type GenericError = Box<dyn std::error::Error + Send + Sync + 'static>;
+    // type GenericResult<T> = Result<T,GenericError>;
+    // use etcd_client::{Client, Error};
+    // use futures::{executor, future}; 
+    // #[test]
+    // fn test_etcd(){
+        
+    // }
 }

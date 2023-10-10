@@ -1,0 +1,1 @@
+{"rustc":927955034769998173,"features":"","target":0,"profile":0,"path":0,"deps":[[18023687348325807981,"build_script_build",false,2935890272810692049]],"local":[{"RerunIfChanged":{"output":"debug/build/etcdui-73a5558861ef6c11/output","paths":["tauri.conf.json"]}},{"RerunIfEnvChanged":{"var":"TAURI_CONFIG","val":null}}],"rustflags":[],"metadata":0,"config":0,"compile_kind":0}
