@@ -27,13 +27,9 @@ interface CustomRouteLocation extends RouteLocation {
     meta: any;
 }
 
-const activeNavMenuIndex = ref()
+const activeNavMenuIndex = ref('/etcdman/runtime')
 const $route: CustomRouteLocation = useRoute();
 const $router = useRouter();
-
-// const defaultPath = computed(() => {
-//     return $route.meta?.activeIndex || $route.fullPath || '';
-// });
 
 const naviMenu = computed(() => {
     const nav = $router.options.routes.filter((v) => v.meta?.isNav) || [];

@@ -9,10 +9,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: PageLayout,
-    // redirect: "/etcdman/runtime",
-    // children: [
-    //   // ...DBRoutes,
-    // ]
   },
   {
     path: '/etcdman/data',
@@ -30,7 +26,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { title: '集群配置', isNav: true,isMenu: true },
     redirect: '/etcdman/runtime/index',
     children: [
-      ...DBRoutes,
+      ...ClusterRoutes,
     ]
   },
   {
