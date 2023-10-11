@@ -40,9 +40,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Welcome to etcdui",
-        "minWidth": 1080,
-        "minHeight": 800
+        "title": "Welcome to etcdui"
       }
     ]
   }

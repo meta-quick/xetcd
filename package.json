@@ -18,6 +18,8 @@
     "@types/node": "^20.8.4",
     "@vitejs/plugin-vue": "^4.2.3",
     "element-plus": "^2.3.14",
+    "normalize.css": "^8.0.1",
+    "pinia": "^2.1.6",
     "primevue": "^3.35.0",
     "sass": "^1.69.1",
     "typescript": "^5.0.2",
