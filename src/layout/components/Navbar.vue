@@ -21,14 +21,10 @@
 </template>
 <script lang="ts" setup>
 import { ref, computed} from 'vue';
-import { useRoute, useRouter, RouteLocation } from 'vue-router';
+import { useRouter } from 'vue-router';
 
-interface CustomRouteLocation extends RouteLocation {
-    meta: any;
-}
 
 const activeNavMenuIndex = ref('/etcdman/runtime')
-const $route: CustomRouteLocation = useRoute();
 const $router = useRouter();
 
 const naviMenu = computed(() => {
@@ -38,8 +34,7 @@ const naviMenu = computed(() => {
 
 //Hanle menu selection
 const handleSelect = (path: string) => {
-    console.log("@path",path)
-    $router.push("/etcdman/index");
+    $router.push(path);
 };
 
 

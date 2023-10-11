@@ -1,8 +1,8 @@
 import { RouteRecordRaw } from 'vue-router';
 import PageLayout from '@/layout/index.vue';
 
-import DBRoutes from './etcd/index.ts';
-import ClusterRoutes from './etcd/cluster.ts'
+import DataManRoutes from './etcd/dataman.ts';
+import ClusterRoutes from './etcd/cluster.ts';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -11,26 +11,27 @@ const routes: Array<RouteRecordRaw> = [
     component: PageLayout,
   },
   {
-    path: '/etcdman/data',
+    path: '/dataman',
     name: 'dataman',
     component: PageLayout,
     meta: { title: '数据配置', activeIndex: true, isNav: true,isMenu: true },
+    redirect: "/dataman/index",
     children: [
-      ...DBRoutes,
+      ...DataManRoutes,
     ]
   },
   {
-    path: '/etcdman/runtime',
+    path: '/runtime',
     name: 'runtimeman',
     component: PageLayout,
     meta: { title: '集群配置', isNav: true,isMenu: true },
-    redirect: '/etcdman/runtime/index',
+    redirect: '/runtime/index',
     children: [
       ...ClusterRoutes,
     ]
   },
   {
-    path: '/etcdman/role',
+    path: '/role',
     name: 'roleman',
     component: PageLayout,
     // redirect: '/etcdman/index',
@@ -40,7 +41,7 @@ const routes: Array<RouteRecordRaw> = [
     // ]
   },
   {
-    path: '/etcdman/user',
+    path: '/user',
     name: 'userman',
     component: PageLayout,
     // redirect: '/etcdman/index',
@@ -50,7 +51,7 @@ const routes: Array<RouteRecordRaw> = [
     // ]
   },
   {
-    path: '/etcdman/service',
+    path: '/service',
     name: 'serviceman',
     component: PageLayout,
     // redirect: '/etcdman/index',
@@ -60,7 +61,7 @@ const routes: Array<RouteRecordRaw> = [
     // ]
   },
   {
-    path: '/etcdman/cluster',
+    path: '/cluster',
     name: 'clusterman',
     component: PageLayout,
     // redirect: '/etcdman/index',
