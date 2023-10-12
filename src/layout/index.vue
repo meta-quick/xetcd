@@ -4,7 +4,7 @@
       <navbar></navbar>
     </el-header>
     <el-container class="sub_contain_wrapper">
-      <el-main>
+      <el-main style="padding-top: 0px;">
         <app-main/>
       </el-main>
     </el-container>
@@ -23,7 +23,7 @@ import { ElHeader } from 'element-plus';
   height: 100%;
 }
 .sub_contain_wrapper {
-  margin-top: 10px;
+  margin-top: 1px;
 }
 </style>
   

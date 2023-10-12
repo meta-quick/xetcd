@@ -16,12 +16,13 @@
 .app-main {
     height: 100%;
     width: 100%;
+    padding-top: 0px;
     position: relative;
     overflow: hidden;
 }
 
 .fixed-header+.app-main {
-    padding-top: 50px;
+    padding-top: 5px;
 }
 
 .hasTagsView {
@@ -30,7 +31,7 @@
     }
 
     .fixed-header+.app-main {
-        padding-top: 84px;
+        padding-top: 8px;
     }
 }
 </style>

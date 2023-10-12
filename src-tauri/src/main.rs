@@ -20,13 +20,17 @@ async fn main() {
         .expect("error while running tauri application");
 }
 
+#[cfg(test)]
 mod test {
-    // type GenericError = Box<dyn std::error::Error + Send + Sync + 'static>;
-    // type GenericResult<T> = Result<T,GenericError>;
-    // use etcd_client::{Client, Error};
-    // use futures::{executor, future}; 
-    // #[test]
-    // fn test_etcd(){
-        
-    // }
+    type GenericError = Box<dyn std::error::Error + Send + Sync + 'static>;
+    type GenericResult<T> = Result<T,GenericError>;
+    use etcd_client::{Client, Error};
+
+    #[tokio::test]
+    async fn test_etcd() -> GenericResult<()>{
+        let address = "192.168.11.214:30380";
+        let mut client = Client::connect([address], None).await?;
+        let val = client.get("/udscctlplane/config/192.168.11.233:allinone/prop",None).await?;
+        Ok(())
+    }
 }
