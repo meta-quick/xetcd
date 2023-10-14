@@ -1,12 +1,12 @@
 <template>
-    <div class="logo flex">
-        <img src="../../assets/logo.png" style="width: 32px;height: 32px;" />
+    <div class="flex mt-2">
+        <img src="../../assets/logo.png" class="logo" style="width: 32px;height: 32px;" />
         <div class="title" style="line-height: 32px;">ECTD Manager</div>
-        <span class="ml-16 mr-2" style="line-height: 32px;">运行环境:</span>
-        <el-select v-model="value" placeholder="Select" class="xx">
-            <el-option v-for="item in cities" :key="item.value" :label="item.label" :value="item.value">
-                <span style="float: left">{{ item.label }}</span>
-                <span style="float: right;color: var(--el-text-color-secondary);font-size: 13px; ">{{ item.value }}</span>
+        <span class="title ml-6" style="line-height: 32px;">运行环境:</span>
+        <el-select class="title ml-2" v-model="selectedValue" @change="handleSelectChange" placeholder="Select" default-first-option="true" filterable="true">
+            <el-option v-for="item in tableData.etcd" style="width: 600px;" :key="item.name" :label="item.name" :value="item.name">
+                <span style="float: left">{{ item.name }}</span>
+                <span style="float: right;color: var(--el-text-color-secondary);font-size: 13px; ">{{ item.address }}</span>
             </el-option>
         </el-select>
         <el-divider direction="vertical" class="divider" />
@@ -20,11 +20,12 @@
     </div>
 </template>
 <script lang="ts" setup>
-import { ref, computed} from 'vue';
+import { ref, computed, onMounted} from 'vue';
 import { useRouter } from 'vue-router';
+import { query_cluster,queryinstance,saveinstance } from '@/apis/api';
 
 
-const activeNavMenuIndex = ref('/etcdman/runtime')
+const activeNavMenuIndex = ref('/runtime/index')
 const $router = useRouter();
 
 const naviMenu = computed(() => {
@@ -38,13 +39,51 @@ const handleSelect = (path: string) => {
 };
 
 
-const value = ref('')
-const cities = [
+const selectedValue = ref('')
+
+const tableData = ref({
+  etcd: [
     {
-        value: 'Beijing',
-        label: 'Beijing',
+      name: '开发环境',
+      authway: '无',
+      address: '192.168.1.1:2379;192.168.1.2:2379;',
+      desc: '开发调试',
     },
-]
+    {
+      name: '生成环境',
+      authway: '无',
+      address: '192.168.1.1:2379;192.168.1.2:2379;',
+      desc: '生产环境，小心操作',
+    },
+  ]
+}
+);
+
+
+onMounted(async () => {
+    let data: string =  await query_cluster();
+    tableData.value.etcd  = JSON.parse(data);
+
+    //query existing instance
+    let instance = await queryinstance({});
+    if(instance != "Err") {
+        let record = JSON.parse(instance);
+        selectedValue.value = record[0].name;
+    } else {
+        if(tableData.value.etcd.length>0){
+            selectedValue.value = tableData.value.etcd[0].name;
+        }
+    }
+})
+
+const handleSelectChange = async (data: any) => {
+    let record = tableData.value.etcd.filter((row)=> row.name == data);
+
+    //save current record to backend
+    if(record){
+        await saveinstance(record);
+    }
+}
 
 </script>
 
@@ -53,33 +92,26 @@ const cities = [
 .title {
     font-size: 15px;
     color: #100f0f;
-}
-
-.enviro {
-    font-size: 15px;
-    color: #100f0f;
-    margin-left: 3px;
+    margin-top: 12px;
 }
 
 .logo {
-    margin-left: -40px;
-    margin-top: -10px;
+    margin-top: 11px;
 }
 
 .nav {
     background-color: transparent;
-    margin-top: -10px;
     font-size: 15px;
     margin-right: 200px;
     font-weight: bold;
 }
 
 .divider {
-    margin-top: 8px;
+    margin-top: 18px;
 }
 
-::v-deep .xx .el-input__inner {
-    box-shadow: none;
-}
+// ::v-deep .model .el-input__inner {
+
+// }
 </style>
   

@@ -1,7 +1,7 @@
 {
   "name": "etcdui",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,17 +10,19 @@
     "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "^1.4.0",
+    "@tauri-apps/api": "^1.5.0",
     "vue": "^3.3.4"
   },
   "devDependencies": {
-    "@tauri-apps/cli": "^1.4.0",
+    "@tauri-apps/cli": "^1.5.0",
     "@types/node": "^20.8.4",
     "@vitejs/plugin-vue": "^4.2.3",
     "element-plus": "^2.3.14",
     "normalize.css": "^8.0.1",
     "pinia": "^2.1.6",
-    "primevue": "^3.35.0",
+    "primeflex": "^3.3.1",
+    "primeicons": "^6.0.1",
+    "primevue": "^3.36.0",
     "sass": "^1.69.1",
     "typescript": "^5.0.2",
     "unplugin-auto-import": "^0.16.6",

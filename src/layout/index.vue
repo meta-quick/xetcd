@@ -4,7 +4,7 @@
       <navbar></navbar>
     </el-header>
     <el-container class="sub_contain_wrapper">
-      <el-main style="padding-top: 0px;">
+      <el-main style="padding-top: 6px;">
         <app-main/>
       </el-main>
     </el-container>
