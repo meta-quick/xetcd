@@ -226,10 +226,11 @@ const nodes = ref<NodeValue[] | null>(
 );
 
 const expandAll = () => {
-  for (let node of nodes.value) {
-    expandNode(node);
+  if(nodes.value){
+    for (let node of nodes.value) {
+      expandNode(node);
+    }
   }
-
   expandedKeys.value = { ...expandedKeys.value };
 };
 
@@ -452,7 +453,9 @@ const onNodeSelect = (node: NodeValue) => {
         selectedKeyPath.value = node.keypath;
         selectedKeyPath.value = node.keypath;
         versionRef.value = node.version;
-        selectedValue.value = node.data;
+        if(node.data){
+          selectedValue.value = node.data;
+        }
         modversionRef.value = node.mod_revision;
         createversionRef.value = node.create_revision;
         leaseRef.value = node.lease;
