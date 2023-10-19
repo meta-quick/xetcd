@@ -20,10 +20,11 @@ import { ElHeader } from 'element-plus';
 <style lang="scss" scoped>
 .contain_wrapper {
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 64px);
 }
 .sub_contain_wrapper {
   margin-top: 1px;
+  height: calc(100vh - 64px);
 }
 </style>
   

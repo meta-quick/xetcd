@@ -41,8 +41,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "Welcome to etcdui",
-        "height": 1024,
-        "width": 1920
+        "minHeight": 1024,
+        "minWidth": 1920
       }
     ]
   }

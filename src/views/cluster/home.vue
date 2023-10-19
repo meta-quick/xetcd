@@ -3,7 +3,7 @@
     <el-button class="mb-1 ml-6" @click="handleRefreshEtcdCluster">刷新列表</el-button>
     <el-button class="mb-1 ml-6" @click="handleCreateEtcdCluster">添加集群</el-button>
     <el-dialog v-model="showClusterDialog" :title="titleText" width="67%" destroy-on-close center>
-      <el-form :model="formData.etcd" label-width="120px">
+      <el-form :model="formData.etcd" style="font-size: 1em;" label-width="120px">
         <el-form-item label="集群名称">
           <el-input v-model="formData.etcd.name" />
         </el-form-item>
@@ -26,7 +26,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-    <el-table :data="tableData.etcd" style="width: 100%">
+    <el-table :data="tableData.etcd" style="width: 100%;font-size: 1em;">
       <el-table-column fixed prop="name" label="集群名称" width="120" />
       <el-table-column prop="address" label="集群地址" width="680" />
       <el-table-column prop="authway" label="认证方式" width="120"/>
@@ -34,8 +34,8 @@
 
       <el-table-column>
         <template #default="scope">
-          <el-button link type="primary" size="small" @click="handleEditRow(scope.$index,scope.row)">修改</el-button>
-          <el-button link type="primary" size="small" @click="handleDeleteRow(scope.$index)">删除</el-button>
+          <el-button link type="primary" @click="handleEditRow(scope.$index,scope.row)">修改</el-button>
+          <el-button link type="primary" @click="handleDeleteRow(scope.$index)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -13,6 +13,6 @@ const locale = zhCn;
 
 <style scoped>
 .tauricontainer {
-  width: 100%;
+  width: 100vh;
 }
 </style>

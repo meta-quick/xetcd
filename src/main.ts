@@ -34,7 +34,10 @@ const router = createRouter({
 
 const app = createApp(App);
 app.use(ElementPlus);
-app.use(PrimeVue,{ripple: true});
+app.use(PrimeVue,{ripple: true,csp: {
+  nonce: 'prime'
+}, inputStyle: "outlined"
+});
 app.use(router);
 app.use(store);
 

@@ -5,8 +5,8 @@
         <span class="title ml-6" style="line-height: 32px;">运行环境:</span>
         <el-select class="title ml-2" v-model="selectedValue" @change="handleSelectChange" placeholder="Select" default-first-option="true" filterable="true">
             <el-option v-for="item in tableData.etcd" style="width: 600px;" :key="item.name" :label="item.name" :value="item.name">
-                <span style="float: left">{{ item.name }}</span>
-                <span style="float: right;color: var(--el-text-color-secondary);font-size: 13px; ">{{ item.address }}</span>
+                <span style="float: left;font-size: 1em;">{{ item.name }}</span>
+                <span style="float: right;color: var(--el-text-color-secondary);font-size: 1em; ">{{ item.address }}</span>
             </el-option>
         </el-select>
         <el-divider direction="vertical" class="divider" />
@@ -90,28 +90,24 @@ const handleSelectChange = async (data: any) => {
 
 <style lang="scss" scoped>
 .title {
-    font-size: 15px;
+    font-size: 1em;
     color: #100f0f;
     margin-top: 12px;
 }
 
 .logo {
-    margin-top: 11px;
+    margin-top: 1em;
 }
 
 .nav {
     background-color: transparent;
-    font-size: 15px;
+    font-size: 1em;
     margin-right: 200px;
     font-weight: bold;
 }
 
 .divider {
-    margin-top: 18px;
+    margin-top: 1em;
 }
-
-// ::v-deep .model .el-input__inner {
-
-// }
 </style>
   
