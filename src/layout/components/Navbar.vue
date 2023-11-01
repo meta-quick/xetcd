@@ -3,8 +3,8 @@
         <img src="../../assets/logo.png" class="logo" style="width: 32px;height: 32px;" />
         <div class="title" style="line-height: 32px;">ECTD Manager</div>
         <span class="title ml-6" style="line-height: 32px;">运行环境:</span>
-        <el-select class="title ml-2" v-model="selectedValue" @change="handleSelectChange" placeholder="Select" default-first-option="true" filterable="true">
-            <el-option v-for="item in tableData.etcd" style="width: 600px;" :key="item.name" :label="item.name" :value="item.name">
+        <el-select class="title ml-2" v-model="selectedValue" @change="handleSelectChange" placeholder="Select">
+            <el-option v-for="item in tableData" style="width: 600px;" :key="item.name" :label="item.name" :value="item.name">
                 <span style="float: left;font-size: 1em;">{{ item.name }}</span>
                 <span style="float: right;color: var(--el-text-color-secondary);font-size: 1em; ">{{ item.address }}</span>
             </el-option>
@@ -41,28 +41,24 @@ const handleSelect = (path: string) => {
 
 const selectedValue = ref('')
 
-const tableData = ref({
-  etcd: [
-    {
-      name: '开发环境',
-      authway: '无',
-      address: '192.168.1.1:2379;192.168.1.2:2379;',
-      desc: '开发调试',
-    },
-    {
-      name: '生成环境',
-      authway: '无',
-      address: '192.168.1.1:2379;192.168.1.2:2379;',
-      desc: '生产环境，小心操作',
-    },
-  ]
+interface EtcdModel {
+    name: string,
+    address: string,
+    authway: string,
+    username: string,
+    password: string,
 }
+
+
+
+const tableData = ref<EtcdModel[]>([
+]
 );
 
 
 onMounted(async () => {
     let data: string =  await query_cluster();
-    tableData.value.etcd  = JSON.parse(data);
+    tableData.value  = JSON.parse(data);
 
     //query existing instance
     let instance = await queryinstance({});
@@ -70,14 +66,14 @@ onMounted(async () => {
         let record = JSON.parse(instance);
         selectedValue.value = record[0].name;
     } else {
-        if(tableData.value.etcd.length>0){
-            selectedValue.value = tableData.value.etcd[0].name;
+        if(tableData.value.length>0){
+            selectedValue.value = tableData.value[0].name;
         }
     }
 })
 
 const handleSelectChange = async (data: any) => {
-    let record = tableData.value.etcd.filter((row)=> row.name == data);
+    let record = tableData.value.filter((row)=> row.name == data);
 
     //save current record to backend
     if(record){

@@ -3,6 +3,8 @@ import PageLayout from '@/layout/index.vue';
 
 import DataManRoutes from './etcd/dataman.ts';
 import ClusterRoutes from './etcd/cluster.ts';
+import RoleRoutes from './etcd/role.ts';
+import UserRoutes from './etcd/user.ts'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -34,21 +36,21 @@ const routes: Array<RouteRecordRaw> = [
     path: '/role',
     name: 'roleman',
     component: PageLayout,
-    // redirect: '/etcdman/index',
+    redirect: '/role/index',
     meta: { title: '授权管理', isNav: true,isMenu: true },
-    // children: [
-    //   ...DBRoutes,
-    // ]
+    children: [
+      ...RoleRoutes,
+    ]
   },
   {
     path: '/user',
     name: 'userman',
     component: PageLayout,
-    // redirect: '/etcdman/index',
+    redirect: '/user/index',
     meta: { title: '用户管理', isNav: true,isMenu: true },
-    // children: [
-    //   ...DBRoutes,
-    // ]
+    children: [
+      ...UserRoutes,
+    ]
   },
   {
     path: '/service',

@@ -5,20 +5,26 @@
     <el-dialog v-model="showClusterDialog" :title="titleText" width="67%" destroy-on-close center>
       <el-form :model="formData.etcd" style="font-size: 1em;" label-width="120px">
         <el-form-item label="集群名称">
-          <el-input v-model="formData.etcd.name" />
+          <el-input v-model="formData.etcd.name" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="认证方式">
           <el-select v-model="formData.etcd.authway" placeholder="请选择认证方式">
-            <el-option label="无" value="无" />
-            <el-option label="证书" value="证书" />
-            <el-option label="密码" value="密码" />
+            <el-option label="无" value="none" />
+            <el-option label="证书" value="cert" />
+            <el-option label="密码" value="password" />
           </el-select>
+        </el-form-item>
+        <el-form-item label="用户名" v-if="formData.etcd.authway=='password'" autocomplete="off">
+          <el-input v-model="formData.etcd.username" autocomplete="off"/>
+        </el-form-item>
+        <el-form-item label="用户名" v-if="formData.etcd.authway=='password'" autocomplete="off">
+          <el-input v-model="formData.etcd.password" autocomplete="off"/>
         </el-form-item>
         <el-form-item label="集群地址">
           <el-input v-model="formData.etcd.address" placeholder="请用英文分号分割地址,如: 192.168.1.1:2379;192.168.1.2:2379;" />
         </el-form-item>
         <el-form-item label="说明">
-          <el-input v-model="formData.etcd.desc" type="textarea" />
+          <el-input v-model="formData.etcd.desc" type="textarea" autocomplete="off"/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSubmitEtcdCluster">{{ submitText }}</el-button>
@@ -82,7 +88,9 @@ const formData = ref({
     name: '',
     authway: '',
     address: '',
-    desc: ''
+    desc: '',
+    username: '',
+    password: '',
   }
 });
 
@@ -94,7 +102,9 @@ const handleCreateEtcdCluster = async () => {
     name: '',
     authway: '',
     address: '',
-    desc: ''
+    desc: '',
+    username: '',
+    password: '',
   };
 
   titleText.value = "添加ETCD集群环境"
@@ -112,6 +122,8 @@ const handleSubmitEtcdCluster = async () => {
         authway: formData.value.etcd.authway,
         address: formData.value.etcd.address,
         desc: formData.value.etcd.desc,
+        password: formData.value.etcd.password,
+        username: formData.value.etcd.username
       };
   tableData.value.etcd.push(rs);
 

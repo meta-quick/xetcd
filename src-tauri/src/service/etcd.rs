@@ -1,67 +1,5 @@
-
 use serde::{Serialize, Deserialize};
-
-#[derive(Debug,Serialize, Deserialize,Clone)]
-pub struct JSonKeyValue {
-    pub key: String,
-    pub create_revision: i64,
-    pub mod_revision: i64,
-    pub version: i64,
-    pub value: String,
-    pub lease: i64,
-}
-
-#[derive(Debug,Serialize, Deserialize,Clone)]
-pub struct SimpleKeyValue {
-    pub key: String,
-    pub value: String,
-}
-
-impl SimpleKeyValue {
-    #[inline]
-    pub fn new(key: impl Into<String>, value: impl Into<String>) -> Self {
-        SimpleKeyValue {
-            key: key.into(),
-            value: value.into(),
-        }
-    }
-
-    #[inline]
-    pub fn key(&self) -> &str {
-        &self.key
-    }
-
-    #[inline]
-    pub fn value(&self) -> &str {
-        &self.value
-    } 
-}
-
-
-impl JSonKeyValue {
-    #[inline]
-    pub fn new(key: impl Into<String>, value: impl Into<String>) -> Self {
-        JSonKeyValue {
-            key: key.into(),
-            value: value.into(),
-            create_revision: 0,
-            mod_revision: 0,
-            version: 0,
-            lease: 0
-        }
-    }
-
-    #[inline]
-    pub fn key(&self) -> &str {
-        &self.key
-    }
-
-    #[inline]
-    pub fn value(&self) -> &str {
-        &self.value
-    }
-}
-
+use crate::types::dto::*;
 pub mod client{
     use std::ops::Add;
     use etcd_client::*;
@@ -77,15 +15,23 @@ pub mod client{
         pub fn new() -> Etcd{
             Etcd { client: None, state: false }
         }
-        pub async fn open(&mut self,address: String) ->Result<bool,Error>{
-            let mut url = address.clone();
-            if !&url.contains(";"){
-                url = url.add(";");
+        pub async fn open(&mut self,config: EtcdConfig) ->Result<bool,Error>{
+            let mut etcd_config = config.clone();
+            if !&etcd_config.address.contains(";"){
+                etcd_config.address = etcd_config.address.add(";");
             }
 
-            let urls :Vec<&str> =  url.split(';').filter(|addr| !addr.is_empty()).collect();
+            let urls :Vec<&str> =  etcd_config.address.split(';').filter(|addr| !addr.is_empty()).collect();
 
-            let client = Client::connect(&urls[..], None).await;
+            let mut option = None;
+            if config.authway.eq("password"){
+                let user = config.username.unwrap();
+                let password = config.password.unwrap();
+                let passwordOption = etcd_client::ConnectOptions::new().with_user(user,password);
+                option = Some(passwordOption);
+            }
+
+            let client = Client::connect(&urls[..], option).await;
             match client {
                 Ok(cli) => {
                     self.client = Some(cli);
@@ -155,16 +101,226 @@ pub mod client{
                 let options =  DeleteOptions::new().with_prefix();
                 let response = cli.delete(kv.key(), Some(options)).await;
                 match response {
-                    Ok(result) => {
+                    Ok(_result) => {
                        return Ok(());
                     },
-                    Err(err) => {
+                    Err(_err) => {
                         return Err(client::Error::InvalidArgs("".into()));
                     }
                 }
             }
             Ok(())
         }
+
+        pub async fn list_roles(&mut self) -> Option<Vec<String>>{
+            if self.state {
+                let cli = self.client.as_mut().unwrap();
+                let response = cli.role_list().await;
+                match response {
+                    Ok(result) => {
+                        let list :Vec<String> =  result.roles().iter().map(|item|{
+                           let a = item.as_str();
+                           return a.to_string();
+                        }).collect();
+                       return Some(list);
+                    }
+                    _ => {
+                        return None;
+                    }
+                }
+            }
+            None
+        }
+
+         pub async fn delete_role(&mut self,role :String) -> Result<(),Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.role_delete(role).await;
+                 match response {
+                     Ok(_result) => {
+                         return Ok(());
+                     }
+                     _ => {
+                         return Err(Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(Error::InvalidArgs("".into()));
+         }
+
+         pub async fn add_role(&mut self,role :String) -> Result<(),Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.role_add(role).await;
+                 match response {
+                     Ok(_result) => {
+                         return Ok(());
+                     }
+                     _ => {
+                         return Err(Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(Error::InvalidArgs("".into()));
+         }
+
+         pub async fn get_role_permission(&mut self,role :String) -> Option<Vec<Permission>>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.role_get(role).await;
+                 match response {
+                     Ok(result) => {
+                         return Some(result.permissions());
+                     }
+                     _ => {
+                         return None;
+                     }
+                 }
+             }
+             return None;
+         }
+
+         pub async fn revoke_role_permission(&mut self,role :String,key: String,range_end: String) -> Result<(),Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let option = RoleRevokePermissionOptions::new().with_prefix().with_range_end(range_end);
+                 let response = cli.role_revoke_permission(role,key,Some(option)).await;
+                 match response {
+                     Ok(_result) => {
+                         return Ok(());
+                     }
+                     _ => {
+                         return Err(Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(Error::InvalidArgs("".into()));
+         }
+
+         pub async fn garnt_role_permission(&mut self,role :String,ty :etcd_client::PermissionType,key: String) -> Result<(),Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+
+                 let permission = Permission::new(ty,key).with_prefix();
+                 let response = cli.role_grant_permission(role,permission).await;
+                 match response {
+                     Ok(_result) => {
+                         return Ok(());
+                     }
+                     _ => {
+                         return Err(Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(Error::InvalidArgs("".into()));
+         }
+
+         pub async fn user_lists(&mut self) -> Option<Vec<String>>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.user_list().await;
+                 match response {
+                     Ok(result) => {
+                         let list :Vec<String> =  result.users().iter().map(|item|{
+                             let a = item.as_str();
+                             return a.to_string();
+                         }).collect();
+
+                         return  Some(list);
+                     }
+                     _ => {
+                         return None;
+                     }
+                 }
+             }
+             return None;
+         }
+
+         pub async fn user_get(&mut self,name :String) -> Option<Vec<String>>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.user_get(name).await;
+                 match response {
+                     Ok(result) => {
+                         let list :Vec<String> =  result.roles().iter().map(|item|{
+                             let a = item.as_str();
+                             return a.to_string();
+                         }).collect();
+
+                         return  Some(list);
+                     }
+                     _ => {
+                         return None;
+                     }
+                 }
+             }
+             return None;
+         }
+
+         pub async fn user_add(&mut self,name :String, password :String) -> Result<(),etcd_client::Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let option = etcd_client::UserAddOptions::new();
+                 let response = cli.user_add(name,password,Some(option)).await;
+                 match response {
+                     Ok(result) => {
+                         return  Ok(());
+                     }
+                     _ => {
+                         return Err(etcd_client::Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(etcd_client::Error::InvalidArgs("".into()));
+         }
+
+         pub async fn user_delete(&mut self,name :String) -> Result<(),etcd_client::Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.user_delete(name).await;
+                 match response {
+                     Ok(result) => {
+                         return  Ok(());
+                     }
+                     _ => {
+                         return Err(etcd_client::Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(etcd_client::Error::InvalidArgs("".into()));
+         }
+
+         pub async fn user_grant_role(&mut self,user :String,role :String) -> Result<(),etcd_client::Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.user_grant_role(user,role).await;
+                 match response {
+                     Ok(result) => {
+                         return  Ok(());
+                     }
+                     _ => {
+                         return Err(etcd_client::Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(etcd_client::Error::InvalidArgs("".into()));
+         }
+
+         pub async fn user_revoke_role(&mut self,user :String,role :String) -> Result<(),etcd_client::Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let response = cli.user_revoke_role(user,role).await;
+                 match response {
+                     Ok(result) => {
+                         return  Ok(());
+                     }
+                     _ => {
+                         return Err(etcd_client::Error::InvalidArgs("".into()));
+                     }
+                 }
+             }
+             return Err(etcd_client::Error::InvalidArgs("".into()));
+         }
      }
 }
 
@@ -172,22 +328,51 @@ pub mod client{
 #[cfg(test)]
 mod test {
     use super::*;
-    use etcd_client::Error;
+    use etcd_client::*;
 
     #[tokio::test]
-    pub async fn test_create_db() ->Result<(),Error>{
-        let mut etcd = client::Etcd::new();
-        let state = etcd.open("192.168.11.214:30380".to_owned()).await;
-        if let Ok(true) = state {
-            let kv = SimpleKeyValue { key: "/test".to_string(), value: "".to_string() };
-            let response =  etcd.remove(kv).await;
-            match response {
-                Ok(result) => {
-                  return Ok(result)
-               },
-                Err(_) => { return Err(Error::InvalidArgs("".into()))},
+    pub async fn test_open_user(){
+        let mut option = None;
+        let user = "root";
+        let password = "zaq12wsx";
+        let passwordOption = etcd_client::ConnectOptions::new().with_user(user,password);
+        option = Some(passwordOption);
+
+        let client = Client::connect(["192.168.11.155:2379"], option).await;
+        match client {
+            Ok(cli) => {
+                println!("{:?}","cli");
+            },
+            Err(err) => {
+                println!("{:?}",err);
             }
         }
-        Ok(())
+    }
+
+    #[tokio::test]
+    pub async fn test_rule(){
+        let mut option = None;
+        let user = "root";
+        let password = "zaq12wsx";
+        let passwordOption = etcd_client::ConnectOptions::new().with_user(user,password);
+        option = Some(passwordOption);
+
+        let client = Client::connect(["192.168.11.155:2379"], option).await;
+        match &client {
+            Ok(cli) => {
+                println!("{:?}","cli");
+            },
+            Err(err) => {
+                println!("{:?}",err);
+            }
+        }
+
+        let resp = client.unwrap().role_list().await;
+        match resp {
+            Ok(res) => {
+                println!("Roles: \n {:?} ", res.roles());
+            }
+            _ => {}
+        }
     }
 }

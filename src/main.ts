@@ -15,7 +15,7 @@ import {
   
 import ElementPlus from 'element-plus'
 import "./styles/normalize.css"
-import "virtual:windi.css";
+// import "virtual:windi.css";
 import 'element-plus/dist/index.css'
 import routes from './routes';
 import store from "./stores";
