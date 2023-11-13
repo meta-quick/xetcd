@@ -5,6 +5,7 @@ import DataManRoutes from './etcd/dataman.ts';
 import ClusterRoutes from './etcd/cluster.ts';
 import RoleRoutes from './etcd/role.ts';
 import UserRoutes from './etcd/user.ts'
+import ServiceRoutes from './etcd/service.ts'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -56,11 +57,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/service',
     name: 'serviceman',
     component: PageLayout,
-    // redirect: '/etcdman/index',
-    meta: { title: '业务模型管理', isNav: true,isMenu: true },
-    // children: [
-    //   ...DBRoutes,
-    // ]
+    redirect: '/serviceman/index',
+    meta: { title: '业务配置管理', isNav: true,isMenu: true },
+    children: [
+      ...ServiceRoutes,
+    ]
   },
   {
     path: '/cluster',

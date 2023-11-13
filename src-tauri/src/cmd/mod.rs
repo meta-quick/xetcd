@@ -1,10 +1,8 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::error::Error;
-use std::io::Write;
-use etcd_client::Permission;
-use serde::{Serialize, Deserialize};
+use std::collections::HashMap;
 use crate::app;
+use crate::app::{db_query, db_save};
 use crate::types::dto::*;
 #[tauri::command]
 pub async fn list_roles() -> Option<Vec<String>>{
@@ -142,7 +140,7 @@ pub async fn list_roles_permission(req: String) -> Option<Vec<PermissionValue>>{
 pub async fn etcd_add_role(req: String) -> Option<String>{
     let response = app::etcd_add_role(req).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some("".to_owned());
         }
         _ => {
@@ -155,7 +153,7 @@ pub async fn etcd_add_role(req: String) -> Option<String>{
 pub async fn etcd_del_role(req: String) -> Option<String>{
     let response = app::etcd_del_role(req).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some("".to_owned());
         }
         _ => {
@@ -168,7 +166,7 @@ pub async fn etcd_del_role(req: String) -> Option<String>{
 pub async fn etcd_role_grant_perimssions(role: String,ty :String, pathx :String) -> Option<String>{
     let response = app::etcd_grant_role_permissions(role,ty,pathx).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some("".to_owned());
         }
         _ => {
@@ -181,7 +179,7 @@ pub async fn etcd_role_grant_perimssions(role: String,ty :String, pathx :String)
 pub async fn etcd_role_revoke_perimssions(role: String,ty :String, pathx :String, range_end: String) -> Option<String>{
     let response = app::etcd_revoke_role_permissions(role,ty,pathx,range_end).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some("".to_owned());
         }
         _ => {
@@ -206,7 +204,7 @@ pub async fn etcd_user_role_list(name :String) -> Option<Vec<String>>{
 pub async fn etcd_user_add(name :String,password: String) -> Option<()>{
     let response = app::etcd_user_add(name,password).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some(());
         }
         _ => {}
@@ -218,7 +216,7 @@ pub async fn etcd_user_add(name :String,password: String) -> Option<()>{
 pub async fn etcd_user_delete(name :String) -> Option<()>{
     let response = app::etcd_user_delete(name).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some(());
         }
         _ => {}
@@ -230,7 +228,7 @@ pub async fn etcd_user_delete(name :String) -> Option<()>{
 pub async fn user_grant_role(user :String,role :String) -> Option<()>{
     let response = app::user_grant_role(user,role).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some(());
         }
         _ => {}
@@ -242,10 +240,80 @@ pub async fn user_grant_role(user :String,role :String) -> Option<()>{
 pub async fn user_revoke_role(user :String,role :String) -> Option<()>{
     let response = app::user_revoke_role(user,role).await;
     match response {
-        Ok(result) => {
+        Ok(_result) => {
             return Some(());
         }
         _ => {}
     }
     None
+}
+
+#[tauri::command]
+pub async fn pki_make_ca(stored: bool,entries :HashMap<String,String>,algorithm: String,bitLen: u32,notBefore :u32,notAfter :u32) -> Option<(String,String,String)>{
+    let result = app::make_ca(entries,algorithm,bitLen,notBefore,notAfter).await;
+
+    match result {
+        Ok((cert,key)) => {
+           let cert =  String::from_utf8_lossy(cert.to_pem().unwrap().as_slice()).to_string();
+           let pub_key =  String::from_utf8_lossy(key.public_key_to_pem().unwrap().as_slice()).to_string();
+           let pri_key =  String::from_utf8_lossy(key.private_key_to_pem_pkcs8().unwrap().as_slice()).to_string();
+
+           //if store, save to local db
+           if stored == true {
+               db_save("pka/ca/cert".to_string(),cert.clone());
+               db_save("pka/ca/pri_key".to_string(),pri_key.clone());
+               db_save("pka/ca/pub_key".to_string(),pub_key.clone());
+           }
+
+           return Some((cert,pub_key,pri_key))
+        }
+        _ => {}
+    }
+
+    None
+}
+
+#[tauri::command]
+pub async fn pki_query_ca() -> Option<(String,String,String)>{
+    let cert = db_query("pka/ca/cert".to_string());
+    match cert {
+        Ok(_cert) => {},
+        Err(_error) => {
+            return None;
+        }
+    }
+
+    let cert = db_query("pka/ca/cert".to_string()).unwrap();
+    let pri_key = db_query("pka/ca/pri_key".to_string()).unwrap();
+    let pub_key = db_query("pka/ca/pub_key".to_string()).unwrap();
+
+    return Some((cert,pub_key,pri_key))
+}
+
+#[tauri::command]
+pub async fn mk_signed_cert(dns :Vec<String>,entries :HashMap<String,String>,algorithm: String,bitLen: u32,notBefore: u32,notAfter: u32) -> Option<(String,String,String)>{
+    let result = app::make_signed_cert(dns,entries,algorithm,bitLen,notBefore,notAfter).await;
+
+    match result {
+        Ok((cert,key)) => {
+            let cert =  String::from_utf8_lossy(cert.to_pem().unwrap().as_slice()).to_string();
+            let pub_key =  String::from_utf8_lossy(key.public_key_to_pem().unwrap().as_slice()).to_string();
+            let pri_key =  String::from_utf8_lossy(key.private_key_to_pem_pkcs8().unwrap().as_slice()).to_string();
+            return Some((cert,pub_key,pri_key))
+        }
+        _ => {}
+    }
+    None
+}
+
+#[tauri::command]
+pub async fn etcd_put_mapkey(entries :HashMap<String,serde_json::Value>) -> Option<String>{
+    for (key, value) in entries {
+        let kv = AnyKeyValue{
+          key,
+          value
+        };
+        app::etcd_put_any(kv).await;
+    }
+    return Some("Ok".to_owned());
 }

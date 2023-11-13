@@ -96,3 +96,30 @@ pub struct PermissionValue {
     pub with_prefix: bool,
     pub with_from_key: bool,
 }
+
+#[derive(Deserialize,Serialize,Debug,Clone)]
+pub struct AnyKeyValue {
+    pub key: String,
+    pub value: serde_json::Value,
+}
+
+impl AnyKeyValue {
+    #[inline]
+    pub fn new(key: impl Into<String>, value: impl Into<serde_json::Value>) -> Self {
+        AnyKeyValue {
+            key: key.into(),
+            value: value.into(),
+        }
+    }
+
+    #[inline]
+    pub fn key(&self) -> &str {
+        &self.key
+    }
+
+    #[inline]
+    pub fn value(&self) -> &serde_json::Value {
+        &self.value
+    }
+}
+

@@ -87,3 +87,19 @@ export const user_revoke_role = async (data: any): Promise<String[]>=> {
   return await rcall("user_revoke_role",data)
 }
 
+export const pki_make_ca = async (data: any): Promise<String[]>=> {
+  return await rcall("pki_make_ca",data)
+}
+
+export const pki_query_ca = async (data: any): Promise<String[]>=> {
+  return await rcall("pki_query_ca",data)
+}
+
+export const mk_signed_cert = async (data: any): Promise<String[]>=> {
+  return await rcall("mk_signed_cert",data)
+}
+
+export const etcd_put_mapkeys = async (data: any): Promise<String[]>=> {
+  return await rcall("etcd_put_mapkey",data)
+}
+

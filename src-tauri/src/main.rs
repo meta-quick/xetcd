@@ -30,6 +30,10 @@ async fn main() {
             cmd::etcd_user_delete,
             cmd::user_grant_role,
             cmd::user_revoke_role,
+            cmd::pki_make_ca,
+            cmd::pki_query_ca,
+            cmd::mk_signed_cert,
+            cmd::etcd_put_mapkey,
             ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

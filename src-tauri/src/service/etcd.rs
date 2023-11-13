@@ -52,6 +52,24 @@ pub mod client{
             Ok(())
         }
 
+        pub async fn put_any(&mut self,kv: AnyKeyValue) ->Result<(),Error>{
+             if self.state {
+                 let cli = self.client.as_mut().unwrap();
+                 let val = kv.value().as_str();
+                 match val {
+                     Some(value) => {
+                         cli.put(kv.key(), kv.value().as_str().unwrap(), None).await?;
+                     }
+                     _ => {
+                         cli.put(kv.key(), kv.value().to_string(), None).await?;
+                     }
+                 }
+
+
+             }
+             Ok(())
+        }
+
         pub async fn get(&mut self,key: String) ->Result<JSonKeyValue,Error>{
             if self.state {
                 let cli = self.client.as_mut().unwrap();

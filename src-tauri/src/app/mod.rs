@@ -1,22 +1,26 @@
+use std::collections::HashMap;
+use std::error::Error;
 use std::io::Write;
 use etcd_client::Permission;
+use openssl::pkey::{PKey, Private};
+use openssl::x509::X509;
 use crate::service::db::storage::Keydb;
 use crate::service::etcd;
+use crate::service::tls;
 use crate::types::dto::*;
 use serde_json::from_str;
-use redb::Error;
 
 pub fn db_save(key: String,val: String){
    let db = Keydb::open().unwrap();
    db.put(&key,&val).unwrap();
 }
-pub fn db_query(key: String) -> Result<String,Error>{
+pub fn db_query(key: String) -> Result<String,redb::Error>{
    let db = Keydb::open();
    if let Some(db) = db {
       return db.get(&key);
    }
 
-   return Err(Error::Corrupted("".into()).into());
+   return Err(redb::Error::Corrupted("".into()).into());
 }
 
 pub fn db_remove(key: String){
@@ -59,7 +63,24 @@ pub async fn etcd_put(key: String,value: String){
    } 
 }
 
-pub async fn etcd_get(key: String) -> Result<JSonKeyValue,Error>{
+pub async fn etcd_put_any(kv :AnyKeyValue){
+   let mut etcd = etcd::client::Etcd::new();
+   let urls = get_etcd_instance();
+
+   if let Some(config) = urls {
+      let state = etcd.open(config).await;
+
+      if let Ok(true) = state {
+         let response =  etcd.put_any(kv).await;
+         match response {
+            Ok(_) => {},
+            Err(_) => {},
+         }
+      }
+   }
+}
+
+pub async fn etcd_get(key: String) -> Result<JSonKeyValue,redb::Error>{
    let mut etcd = etcd::client::Etcd::new();
    let urls = get_etcd_instance();
    if let Some(config) = urls {
@@ -69,17 +90,17 @@ pub async fn etcd_get(key: String) -> Result<JSonKeyValue,Error>{
          let response =  etcd.get(key).await;
          match response {
              Ok(result) => {return Ok(result)},
-             Err(_) => { return Err(Error::Corrupted("".into()).into())},
+             Err(_) => { return Err(redb::Error::Corrupted("".into()).into())},
          }
       } else {
-         return Err(Error::Corrupted("".into()).into());
+         return Err(redb::Error::Corrupted("".into()).into());
       }
    }
 
-   return Err(Error::Corrupted("".into()).into());
+   return Err(redb::Error::Corrupted("".into()).into());
 }
 
-pub async fn etcd_get_all(key: String) -> Result<Vec<JSonKeyValue>,Error>{
+pub async fn etcd_get_all(key: String) -> Result<Vec<JSonKeyValue>,redb::Error>{
    let mut etcd = etcd::client::Etcd::new();
 
    let urls = get_etcd_instance();
@@ -92,14 +113,14 @@ pub async fn etcd_get_all(key: String) -> Result<Vec<JSonKeyValue>,Error>{
              Ok(result) => {
                return Ok(result)
             },
-             Err(_) => { return Err(Error::Corrupted("".into()).into())},
+             Err(_) => { return Err(redb::Error::Corrupted("".into()).into())},
          }
       } else {
-         return Err(Error::Corrupted("".into()).into());
+         return Err(redb::Error::Corrupted("".into()).into());
       }
    }
 
-   return Err(Error::Corrupted("".into()).into());
+   return Err(redb::Error::Corrupted("".into()).into());
 }
 
 pub async fn etcd_delete(key: String)  -> Result<String,etcd_client::Error> {
@@ -363,6 +384,34 @@ pub async fn user_revoke_role(user :String,role :String)  -> Result<(), etcd_cli
       }
    }
    Err(etcd_client::Error::InvalidArgs("".into()))
+}
+
+pub async fn make_ca(entries :HashMap<String,String>,algorithm: String,bits_len: u32,not_before: u32,not_after: u32)  -> Result<(X509, PKey<Private>), Box<dyn Error>> {
+   let result =  tls::mk_ca_cert_with_entry(entries,algorithm,bits_len,not_before,not_after);
+   match result {
+      Ok(cert) => {
+         return Ok(cert)
+      }
+      _ => {}
+   }
+   Err("".into())
+}
+
+
+pub async fn make_signed_cert(dns :Vec<String>,entries :HashMap<String,String>,algorithm: String,bits_len: u32,not_before: u32,not_after: u32)  -> Result<(X509, PKey<Private>), Box<dyn Error>> {
+   let cert = db_query("pka/ca/cert".to_string()).unwrap();
+   let pri_key = db_query("pka/ca/pri_key".to_string()).unwrap();
+
+   let (cert,key) =  tls::load_ca(cert,pri_key).unwrap();
+   let result = tls::mk_ca_signed_cert(&cert,&key,dns,entries,bits_len,not_before,not_after);
+
+   match result {
+      Ok(result) => {
+         return Ok(result)
+      }
+      _ => {}
+   }
+   Err("".into())
 }
 
 #[cfg(test)]

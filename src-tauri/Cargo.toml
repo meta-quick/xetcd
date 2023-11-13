@@ -23,6 +23,7 @@ redb = "1.2.0"
 tempfile = "3.1.0"
 home = "0.5.5"
 lazy_static = "1.4.0"
+openssl = { version = "0.10", features = ["vendored"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
