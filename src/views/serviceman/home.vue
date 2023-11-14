@@ -16,6 +16,7 @@
             <Button class="ml-1 mr-2" v-if="isSignedRequest" @click="handleSignedCertRequst">提交证书申请</Button>
             <Button class="ml-1 mr-2" v-if="isIamConfigRequest" @click="handleIamConfigRequst">提交IAM配置</Button>
             <Button class="ml-1 mr-2" v-if="isAppConfigRequest" @click="handleAppConfigRequst">提交应用配置</Button>
+            <Button class="ml-1 mr-2" v-if="isPolicyConfigRequest" @click="handlePolicyConfigRequst">提交权限模型</Button>
         </div>
         <div id="monacoeditor" class="monacocontainer mt-2 pt-2"
           style="height: calc(100% - 63px);width: calc(100vw - 480px);" ref="main">
@@ -81,7 +82,14 @@ const sidemenus = ref([
     label: "权限服务配置",
     data: "权限服务配置",
     icon: "pi pi-fw pi-cog",
-  }
+  },
+  {
+    key: "权限模型配置",
+    keypath:"/configuration/permission-devel-master.yaml",
+    label: "权限模型配置",
+    data: "权限模型配置",
+    icon: "pi pi-fw pi-cog",
+  },
 ])
 const expandedKeys = ref<any>({})
 const selectedKey = ref<any>(null)
@@ -91,6 +99,7 @@ const isCertificateRequest = ref(false)
 const isSignedRequest = ref(false)
 const isIamConfigRequest = ref(false)
 const isAppConfigRequest = ref(false)
+const isPolicyConfigRequest = ref(false)
 
 let editor: monaco.editor.IStandaloneCodeEditor | null = null
 onMounted(async () => {
@@ -180,10 +189,10 @@ configuration:
   cluster:
     iamadmin:
       cert: mess
-      client-id: c8eee4ccbab0e67ea404
-      client-secret: a663244a60606b6b02becd5d12e7122d9b1c8d1b
+      client-id: c8eee4ccbab0e67ea404  #需要从IAM中获取
+      client-secret: a663244a60606b6b02becd5d12e7122d9b1c8d1b  #需要从IAM中获取
       enabled: true  
-    publicKey: |
+    publicKey: |  #需要从IAM中获取证书
       -----BEGIN CERTIFICATE-----
       MIIE2TCCAsGgAwIBAgIDAeJAMA0GCSqGSIb3DQEBCwUAMCYxDjAMBgNVBAoTBWFk
       bWluMRQwEgYDVQQDDAtjZXJ0X2hhYjE4bjAeFw0yMzAxMDQwNTA5MzlaFw00MzAx
@@ -216,7 +225,7 @@ configuration:
 
 ///udscctlplane/kms/publicKey
 const iamGatewayKey = `
-udscctlplane:
+udscctlplane:  #需要从IAM中获取证书
   kms:
     publicKey: |
       -----BEGIN CERTIFICATE-----
@@ -270,15 +279,63 @@ pulsar:
 casdoor:
   endpoint: http://gwm-iam.testing:8000
 cas-user:
-  org-name: built-in
-  cert: cert-built-in
-  client-id: c8eee4ccbab0e67ea404
-  client-secret: a663244a60606b6b02becd5d12e7122d9b1c8d1b
+  org-name: built-in  #需要从IAM中获取
+  cert: cert-built-in  #需要从IAM中获取
+  client-id: c8eee4ccbab0e67ea404  #需要从IAM中获取
+  client-secret: a663244a60606b6b02becd5d12e7122d9b1c8d1b #需要从IAM中获取
 `
 
 ///configuration/policyman-devel-master.yaml
 const permissionYaml = `
 ping: pong
+`
+
+const casModel = `
+cass:
+  plugin:
+    gateway:
+      model: |
+        [request_definition]
+        r = sub,dom, obj, act
+        [policy_definition]
+        p = sub,dom, obj, act
+        [role_definition]
+        g = _, _, _
+        [policy_effect]
+        e = some(where (p.eft == allow))
+        [matchers]
+        m = g(r.sub, p.sub, r.dom) && regexMatch(r.obj,p.obj) && regexMatch(r.act, p.act) && r.dom == p.dom || superUser(r.sub) || whiteList(r.obj,r.act)
+
+      policy: |
+        p,__INTER_APP__,domain,^.*$,^.*$,allow
+        g,luozj,测试,domain
+        g,luozj,00001,domain
+        g,luozj,phb,domain
+        g,luozj,0007,domain
+        g,luozj,dev_zq,domain
+        g,chengxiuli,0803,domain
+        g,chengxiuli,00001,domain
+        g,chengxiuli,phb,domain
+        g,chengxiuli,luozj_test_1,domain
+        g,chengxiuli,0007,domain
+        g,chengxiuli,dev_zq,domain
+        g,test_admin,00001,domain
+        g,test_admin,phb,domain
+        g,test_admin,luozj_test_1,domain
+        g,test_admin,0007,domain
+        g,test_admin,dev_zq,domain
+        g,chengxiuli11,0803,domain
+        g,chengxiuli11,00001,domain
+        g,chengxiuli11,phb,domain
+        g,chengxiuli11,luozj_test_1,domain
+        g,chengxiuli11,0007,domain
+        g,chengxiuli11,dev_zq,domain
+        g,datasafe,dev_zq,domain
+        g,dev_zq,dev_zq,domain
+        g,SupperUser,dev_zq,domain
+        g,test3,dev_zq,domain
+        g,test2,dev_zq,domain
+        g,test1,dev_zq,domain
 `
 
 
@@ -288,6 +345,8 @@ function createTemplate(node: string): string{
   isIamConfigRequest.value = false;
   isCertificate.value = false;
   isAppConfigRequest.value = false;
+  isPolicyConfigRequest.value = false;
+
 
   if(node == "PKI证书"){
     isCertificateRequest.value = true;
@@ -317,6 +376,11 @@ function createTemplate(node: string): string{
   if(node == "权限服务配置"){
     isAppConfigRequest.value = true;
     return permissionYaml
+  }
+
+  if(node == "权限模型配置"){
+    isPolicyConfigRequest.value = true;
+    return casModel
   }
 
   return "";
@@ -473,6 +537,16 @@ const handleAppConfigRequst = async () => {
   }
 }
 
+const handlePolicyConfigRequst = async () => {
+  isCertificate.value = false;
+  if(editor){
+    let template = editor.getValue();
+    let json: any = yaml.load(template);
+
+    let data = flattenObject(json);
+    await etcd_put_mapkeys({entries: data});
+  }
+}
 
 </script>
 <style scoped  lang="scss">
