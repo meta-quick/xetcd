@@ -1,9 +1,9 @@
 <template>
     <div class="flex mt-2">
         <img src="../../assets/logo.png" class="logo" style="width: 32px;height: 32px;" />
-        <div class="title" style="line-height: 32px;">ECTD Manager</div>
+        <div class="title" style="line-height: 32px;">META配置管理</div>
         <span class="title ml-6" style="line-height: 32px;">运行环境:</span>
-        <el-select class="title ml-2" v-model="selectedValue" @change="handleSelectChange" placeholder="Select">
+        <el-select class="title ml-2" v-model="selectedValue" @focus="loadOption" @change="handleSelectChange" placeholder="Select">
             <el-option v-for="item in tableData" style="width: 600px;" :key="item.name" :label="item.name" :value="item.name">
                 <span style="float: left;font-size: 1em;">{{ item.name }}</span>
                 <span style="float: right;color: var(--el-text-color-secondary);font-size: 1em; ">{{ item.address }}</span>
@@ -25,7 +25,7 @@ import { useRouter } from 'vue-router';
 import { query_cluster,queryinstance,saveinstance } from '@/apis/api';
 
 
-const activeNavMenuIndex = ref('/runtime/index')
+const activeNavMenuIndex = ref('/dataman/index')
 const $router = useRouter();
 
 const naviMenu = computed(() => {
@@ -55,10 +55,17 @@ const tableData = ref<EtcdModel[]>([
 ]
 );
 
-
-onMounted(async () => {
+const loadOption = async () => {
     let data: string =  await query_cluster();
     tableData.value  = JSON.parse(data);
+    let none = {
+        name: '无',
+        address: '',
+        authway: '',
+        username: '',
+        password: ''
+    };
+    tableData.value.push(none);
 
     //query existing instance
     let instance = await queryinstance({});
@@ -70,6 +77,11 @@ onMounted(async () => {
             selectedValue.value = tableData.value[0].name;
         }
     }
+}
+
+onMounted(async () => {
+   await loadOption();
+   $router.push(activeNavMenuIndex.value);
 })
 
 const handleSelectChange = async (data: any) => {

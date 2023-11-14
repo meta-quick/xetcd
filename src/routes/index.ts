@@ -12,6 +12,10 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'home',
     component: PageLayout,
+    meta: { title: '数据配置', activeIndex: true, isNav: false,isMenu: false },
+    redirect: "/dataman/index",
+    children: [
+    ]
   },
   {
     path: '/dataman',

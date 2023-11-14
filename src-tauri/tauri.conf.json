@@ -40,7 +40,7 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "Welcome to etcdui",
+        "title": "欢迎使用META配置工具",
         "minHeight": 1024,
         "minWidth": 1920
       }
